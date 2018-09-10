@@ -1,13 +1,10 @@
-<?php
-require 'header.php';
+<?php require 'header.php'; ?>
 
-echo "<br><span class='main'>Welcome to $appname,";
+<?php $message = $loggedin ? "$user, you are logged in" : "Please sign up and/or log in to join in."; ?>
 
-if ($loggedin) echo " $user, you are logged in.";
-else echo ' please sign up and/or log in to join in.';
-?>
-
-
-</span><br><br>
+<h2>
+	<p class='text-secondary mt-3'>Welcome to <?=$appname?></p>
+</h2>
+<span><?=$message?></span>
 
 <?php require 'footer.php'; ?>
