@@ -2,52 +2,6 @@
 
 require_once 'header.php';
 
-echo <<<_END
-<script>
-function checkUser(user)
-{
-if (user.value == '')
-{
-0('info').innerHTML = ''
-return
-}
-
-params = "user=" + user.value
-request = new ajaxRequest()
-request.open("POST", "checkuser.php", true)
-request.setRequestHeader("Content-type",
-"application/x-www-form-urlencoded")
-request.setRequestHeader("Content-length", params.length)
-request.setRequestHeader("Connection", "close")
-
-request.onreadystatechange = function()
-{
-if (this.readyState == 4)
-if (this.status == 200)
-if (this.responseText != null)
-0('info').innerHTML = this.responseText
-}
-request.send(params)
-}
-
-function ajaxRequest()
-{
-try { var request = new XMLHttpRequest() }
-catch(e1) {
-try { request = new ActiveXObject("Msxml2.XMLHTTP") }
-catch(e2) {
-try { request = new ActiveXObject("Microsoft.XMLHTTP) }
-catch (e3) {
-request = false
-}
-}
-}
-return request
-}
-</script>
-<div class='main'><h3>Please enter your details to sign up</h3>
-_END;
-
 $error = $user= $pass = "";
 if (isset($_SESSION['user'])) destroySession();
 
@@ -57,34 +11,43 @@ if (isset($_POST['user']))
     $pass = sanitizeString($_POST['pass']);
 
     if ($user == "" || $pass == "")
-        $error = "Not all fields were entered<br><br>";
+        $error = "Not all fields were entered";
     else
     {
         $result=queryMysql("SELECT * FROM members WHERE user='$user'");
         if ($result->num_rows)
-            $error = "That username already exists<br><br>";
+            $error = "That username already exists";
         else
         {
             queryMysql("INSERT INTO members VALUES('$user','$pass')");
-            die("<h4>Account created</h4>Please log in.<br><br>");
+			$signup_success = TRUE;
 
         }
     }
 }
 
-echo <<<_END
-<form method='post' action='signup.php'>$error
-<span class='fieldname'>Username</span>
-<input type='text' maxlength='16' name='user' value='$user'
-onBlur='checkUser(this)'><span id='info'></span><br>
-<span class='fieldname'>Password</span>
-<input type='text' maxlength='16' name='pass' value='$pass'><br>
-_END;
-
 ?>
 
-<span class='fieldname'>&nbsp;</span>
-<input type='submit' value='Sign up'>
-</form></div><br>
-</body>
-</html>
+<?php if (isset($signup_success)) : ?>
+
+	<h4 class="text-success">Account created</h4><br>Please log in.
+
+<?php else : ?>
+
+<h3>Please enter your details to sign up</h3>
+<form method="post" action="signup.php">
+ <span class="text-danger"><?=$error?></span>
+  <div class="form-group">
+    <label for="inputUsername">Username</label>
+    <input name="user" value="<?=$user?>" type="text" class="form-control" id="signupUsername" aria-describedby="emailHelp" placeholder="Enter username" maxlength="16" onBlur="checkUser(this)">
+  </div>
+  <div class="form-group">
+    <label for="inputPassword">Password</label>
+    <input name="pass" value="<?=$pass?>" type="password" class="form-control" id="inputPassword" placeholder="Password" maxlength="16">
+  </div>
+  <button type="submit" class="btn btn-primary">Sign up</button>
+</form>
+
+<?php endif; ?>
+
+<?php require 'footer.php'; ?>

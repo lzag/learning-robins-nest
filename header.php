@@ -70,7 +70,6 @@ else
 						<li class="nav-item">
 							<a class="nav-link" href="login.php">Log in</a>
 						</li>
-						<span class='info'>&#8658; You must be logged in to view this page.</span><br>
 
 						<?php endif; ?>
 
