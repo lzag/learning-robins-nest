@@ -1,12 +1,10 @@
 <?php
 
-$dbhost="localhost";
-$dbname="robinsnest";
-$dbuser="robinsnest";
-$dbpass="rnpassword";
+require 'dbconfig.php';
+
 $appname="My Social Network";
 
-$connection = new mysqli($dbhost,$dbuser,$dbpass,$dbname);
+$connection = new mysqli(DB_HOST,DB_USER,DB_PASS,DB_NAME);
 
 if($connection->connect_error) die($connection->connect_error);
 
