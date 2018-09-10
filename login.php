@@ -1,7 +1,7 @@
 <?php
 
-require_once 'header.php';
-echo "<div class='main'><h3>Please enter your details to log in</h3>";
+require 'header.php';
+
 $error = $user = $pass = "";
 
 if (isset($_POST['user']))
@@ -10,32 +10,48 @@ if (isset($_POST['user']))
     $pass = sanitizeString($_POST['pass']);
 
     if ($user == "" || $pass == "")
-        $error = "Not all fields were entered<br>";
-        else
-{
-    $result = queryMysql("SELECT user,pass FROM members WHERE user='$user' AND pass='$pass'");
-    if ($result->num_rows == 0)
-    {
-        $error = "<span class='error'>Username/Password invalid</span><br><br>";
-    } else
-    {
-        $_SESSION['user'] = $user;
-        $_SESSION['pass'] = $pass;
-        die("You are now logged in. Please <a href='members.php?view=$user'>". "click here.</a>to continue.<br><br>");
-    }
-}
+	{
+		$error = "Not all fields were entered";
+	}
+	else
+	{
+		$result = queryMysql("SELECT user,pass FROM members WHERE user='$user' AND pass='$pass'");
+		if ($result->num_rows == 0)
+    	{
+        	$error = "Username/Password invalid";
+    	}
+		else
+    	{
+			$_SESSION['user'] = $user;
+			$_SESSION['pass'] = $pass;
+			$login_success = TRUE;
+    	}
+	}
 }
 
-echo <<<_END
-<form method='post' action='login.php'>$error
-<span class='fieldname'>Username</span><input type='text' maxlength='16' name='user' value='$user'><br>
-<span class='fieldname'>Password</span><input type='password' maxlength='16' name='pass' value='$pass'>
-_END;
+if (isset($login_success)) :
+
 ?>
 
-<br>
-<span class='fieldname'>&nbsp;</span>
-<input type='submit' value='Login'>
-</form><br></div>
-</body>
-</html>
+<span class="text-success mt-3">You are now logged in. Please <a href="members.php?view=<?=$user?>">click here</a> to continue.</span>
+
+<?php else : ?>
+
+<h3>Please enter your details to log in</h3>
+<form method="post" action="login.php">
+ <span class="text-danger"><?=$error?></span>
+  <div class="form-group">
+    <label for="inputUsername">Username</label>
+    <input name="user" value="<?=$user?>" type="text" class="form-control" id="inputUsername" aria-describedby="emailHelp" placeholder="Enter username" maxlength="16">
+  </div>
+  <div class="form-group">
+    <label for="inputPassword">Password</label>
+    <input name="pass" value="<?=$pass?>" type="password" class="form-control" id="inputPassword" placeholder="Password" maxlength="16">
+  </div>
+  <button type="submit" class="btn btn-primary">Log in</button>
+</form>
+
+<?php
+endif;
+require 'footer.php';
+?>
