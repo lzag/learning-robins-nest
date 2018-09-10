@@ -4,7 +4,7 @@ $dbhost="localhost";
 $dbname="robinsnest";
 $dbuser="robinsnest";
 $dbpass="rnpassword";
-$appname="Robins's Nest";
+$appname="My Social Network";
 
 $connection = new mysqli($dbhost,$dbuser,$dbpass,$dbname);
 
