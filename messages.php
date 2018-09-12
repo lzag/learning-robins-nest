@@ -17,7 +17,7 @@ if (isset($_POST['text']))
     {
         $pm = substr(sanitizeString($_POST['pm']),0,1);
         $time = time();
-        queryPDOMysql("INSERT INTO messages VALUES(NULL, 'user', '$view', '$pm', '$time','$text')");
+        queryPDOMysql("INSERT INTO messages VALUES(NULL, '$user', '$view', '$pm', '$time','$text')");
     }
 }
 
@@ -37,8 +37,8 @@ if ($view != "")
     <form method="post" action="messages.php?view=<?=$view?>">
     Type here to leave a message: <br>
     <textarea name="text" cols="40" rows="3"></textarea><br>
-    Public<input type="radio" name="pm" value="0" checked="checked">
-    Private<input type="radio" name="pm" value="1">
+    Public <input type="radio" name="pm" value="0" checked="checked">
+    Private <input type="radio" name="pm" value="1">
     <input class="btn btn-primary" type="submit" value="Post Message"></form><br>
 
 <?php
@@ -59,8 +59,8 @@ if ($view != "")
 
         if ($row['pm'] == 0 || $row['auth'] == $user || $row['recip'] == $user)
         {
-            echo date('M jS \'y g:ia:', $row['time']);
-            echo "<a href='messages.php?view=".$row['auth']."'>".$row['auth']."</a>";
+            echo "On " . date('M jS \'y g:ia: ', $row['time']) . "<br>";
+            echo "<strong><a href='messages.php?view=".$row['auth']."'>".$row['auth']."</a></strong> ";
 
             if ($row['pm'] == 0)
                 echo "wrote: &quot; ".$row['message'] . "&quot; ";

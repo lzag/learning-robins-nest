@@ -30,7 +30,6 @@ function createTable($name,$query)
 	{
 		echo $e->getMessage(). "<br>";
 	}
-
 }
 
 function queryPDOMysql($query)
@@ -43,7 +42,7 @@ function queryPDOMysql($query)
 	}
    	catch (PDOException $e)
 	{
-		$e->getMessage();
+		echo $e->getMessage();
 		return false;
 	}
 

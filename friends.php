@@ -48,7 +48,7 @@ $mutual = array_intersect($followers, $following);
 $followers = array_diff($followers, $mutual);
 $following = array_diff($following, $mutual);
 
-if (!$mutual || !$followers || !$following) $friends = FALSE;
+$friends = (!$mutual && !$followers && !$following) ? FALSE : TRUE;
 
 ?>
 
