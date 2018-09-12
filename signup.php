@@ -14,12 +14,12 @@ if (isset($_POST['user']))
         $error = "Not all fields were entered";
     else
     {
-        $result=queryMysql("SELECT * FROM members WHERE user='$user'");
-        if ($result->num_rows)
+        $result=queryPDOMysql("SELECT * FROM members WHERE user='$user'");
+        if ($result->rowCount())
             $error = "That username already exists";
         else
         {
-            queryMysql("INSERT INTO members VALUES('$user','$pass')");
+            queryPDOMysql("INSERT INTO members VALUES('$user','$pass')");
 			$signup_success = TRUE;
 
         }

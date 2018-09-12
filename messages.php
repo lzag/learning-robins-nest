@@ -1,11 +1,14 @@
 <?php
 require_once 'header.php';
 
-if (!$loggedin) die();
+/* Check for login */
+if (!$loggedin) die("Sorry, you need to be logged in to view this page");
+
 
 if (isset($_GET['view'])) $view = sanitizeString($_GET['view']);
 else                      $view = $user;
 
+/* Inserting the text message into the database*/
 if (isset($_POST['text']))
 {
     $text = sanitizeString($_POST['text']);
@@ -14,7 +17,7 @@ if (isset($_POST['text']))
     {
         $pm = substr(sanitizeString($_POST['pm']),0,1);
         $time = time();
-        queryMysql("INSERT INTO messages VALUES(NULL, 'user', '$view', '$pm', '$time','$text')");
+        queryPDOMysql("INSERT INTO messages VALUES(NULL, 'user', '$view', '$pm', '$time','$text')");
     }
 }
 
@@ -30,28 +33,29 @@ if ($view != "")
     echo "<div class='main'><h3>$name1 Messages</h3>";
     showProfile($view);
 
-    echo <<<_END
-    <form method='post' action='messages.php'?view=$view'>
+?>
+    <form method="post" action="messages.php?view=<?=$view?>">
     Type here to leave a message: <br>
-    <textarea name='text' cols='40' rows='3'></textarea><br>
-    Public<input type='radio' name='pm' value='0' checked='checked'>
-    Private<input type='radio' name='pm' value='1'>
-    <input type='submit' value='Post Message'></form><br>
-_END;
+    <textarea name="text" cols="40" rows="3"></textarea><br>
+    Public<input type="radio" name="pm" value="0" checked="checked">
+    Private<input type="radio" name="pm" value="1">
+    <input class="btn btn-primary" type="submit" value="Post Message"></form><br>
 
+<?php
+
+	/* Erase the messages from the database */
     if (isset($_GET['erase']))
     {
         $erase = sanitizeString($_GET['erase']);
-        queryMysql("DELETE FROM messages WHERE id=$erase AND recip='$user'");
+        queryPDOMysql("DELETE FROM messages WHERE id=$erase AND recip='$user'");
     }
 
-    $query = "SELECT * FROM messages WHERE recip='$view' ORDER BY time DESC";
-    $result = queryMysql($query);
-    $num = $result->num_rows;
+	$query = "SELECT * FROM messages WHERE recip='$view' ORDER BY time DESC";
+    $result = queryPDOMysql($query);
 
-    for ($j = 0 ; $j < $num ; ++$j)
+	/* Echo  the messages */
+    while( $row = $result->fetch(PDO::FETCH_ASSOC))
     {
-        $row = $result->fetch_array(MYSQLI_ASSOC);
 
         if ($row['pm'] == 0 || $row['auth'] == $user || $row['recip'] == $user)
         {
@@ -59,7 +63,7 @@ _END;
             echo "<a href='messages.php?view=".$row['auth']."'>".$row['auth']."</a>";
 
             if ($row['pm'] == 0)
-                echo "wrote: &quot;".$row['message'] . "&quot; ";
+                echo "wrote: &quot; ".$row['message'] . "&quot; ";
             else
                 echo "whispered: <span class='whisper'>&quot;" . $row['message'] . "&quot;</span>";
 
@@ -72,12 +76,10 @@ _END;
     }
 }
 
-if (!$num) echo "<br><span class='info'>No messages yet</span><br><br>";
-
-echo "<br><a class='button' href='messages.php?view=$view'>Refresh messages</a>";
+if ($result->rowCount() == 0) echo "<br><span class='info'>No messages yet</span><br><br>";
 ?>
 
+<br><a class="btn btn-primary" href="messages.php?view=<?=$view?>">Refresh messages</a>
 
-</div><br>
-</body>
-</html>
+
+<?php require 'footer.php'; ?>

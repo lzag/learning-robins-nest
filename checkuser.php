@@ -4,9 +4,9 @@ require_once 'functions.php';
 if (isset($_POST['user']))
 {
     $user = sanitizeString($_POST['user']);
-    $result = queryMysql("SELECT * FROM members WHERE user='$user'");
+    $result = queryPDOMysql("SELECT * FROM members WHERE user='$user'");
 
-    if ($result->num_rows)
+    if ($result->rowCount())
        echo "<span class='taken'>&nbsp;&#x2718; "   .
        "this  username is taken</span>";
     else

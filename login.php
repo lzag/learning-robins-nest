@@ -15,8 +15,8 @@ if (isset($_POST['user']))
 	}
 	else
 	{
-		$result = queryMysql("SELECT user,pass FROM members WHERE user='$user' AND pass='$pass'");
-		if ($result->num_rows == 0)
+		$result = queryPDOMysql("SELECT user,pass FROM members WHERE user='$user' AND pass='$pass'");
+		if ( !$result->fetchAll() )
     	{
         	$error = "Username/Password invalid";
     	}

@@ -1,9 +1,7 @@
 <?php
 require_once 'header.php';
 
-if (!$loggedin) die();
-
-echo "<div class='main'>";
+if (!$loggedin) die("Your must be logged in to view this page");
 
 if (isset($_GET['view']))
 {
@@ -21,32 +19,33 @@ if (isset($_GET['add']))
 {
     $add = sanitizeString($_GET['add']);
 
-    $result = queryMysql("SELECT * FROM friends WHERE user='$add' AND friend='$user'");
-    if (!$result->num_rows)
-        queryMysql("INSERT INTO friends VALUES ('$add','$user')");
+    $result = queryPDOMysql("SELECT * FROM friends WHERE user='$add' AND friend='$user'");
+    if (!$result->fetchAll())
+        queryPDOMysql("INSERT INTO friends VALUES ('$add','$user')");
 }
 else if (isset($_GET['remove']))
 {
     $remove = sanitizeString($_GET['remove']);
-    queryMysql("DELETE FROM friends WHERE user='$remove' and friend='$user'");
+    queryPDOMysql("DELETE FROM friends WHERE user='$remove' and friend='$user'");
 }
 
-$result = queryMysql("SELECT user FROM members ORDER by user");
-$num = $result->num_rows;
+$result = queryPDOMysql("SELECT user FROM members ORDER by user");
+?>
 
-echo "<h3>Other Members</h3><ul>";
+<h3>Other Members</h3><ul>
 
-for ($j = 0; $j < $num; ++$j)
+<?php
+while( $row = $result->fetch(PDO::FETCH_ASSOC))
 {
-    $row=$result->fetch_array(MYSQLI_ASSOC);
+
     if ($row['user'] == $user) continue;
     echo "<li><a href='members.php?view=" . $row['user'] . "'>" . $row['user'] . "</a>";
     $follow = "follow";
 
-    $result1 = queryMysql("SELECT * FROM friends WHERE user='". $row['user'] . "' AND friend='$user'");
-    $t1 = $result1->num_rows;
-    $result1 = queryMysql("SELECT * FROM friends WHERE user='$user' AND friend='". $row['user'] . "'");
-    $t2 = $result1->num_rows;
+    $result1 = queryPDOMysql("SELECT * FROM friends WHERE user='". $row['user'] . "' AND friend='$user'");
+    $t1 = $result1->rowCount();
+    $result1 = queryPDOMysql("SELECT * FROM friends WHERE user='$user' AND friend='". $row['user'] . "'");
+    $t2 = $result1->rowCount();
 
     if (($t1 + $t2 ) > 1) echo "&harr; is a mutual friend";
     elseif ($t1) echo " &larr; you are following";
@@ -60,6 +59,5 @@ else echo " [<a href='members.php?remove=" . $row['user'] . "'>drop</a>]";
 ?>
 
 
-</ul></div>
-</body>
-</html>
+</ul>
+<?php require 'footer.php' ?>

@@ -2,7 +2,7 @@
 
 require_once 'header.php';
 
-if (!$loggedin) die();
+if (!$loggedin) die("You need to be loggedin in order to view this page");
 
 if (isset($_GET['view'])) $view = sanitizeStrings($_GET['view']);
 else $view = $user;
@@ -19,66 +19,88 @@ else
     $name3 = "$view is";
 }
 
-echo "<div class='main'>";
-
 $followers = array();
 $following = array();
 
-$result = queryMysql("SELECT * FROM friends WHERE user='$view'");
-$num = $result->num_rows;
 
-for ($j = 0 ; $j < $num ; ++$j)
+/* Get all the people who are following the user*/
+$result = queryPDOMysql("SELECT * FROM friends WHERE user='$view'");
+
+$j = 0;
+while($row = $result->fetch(PDO::FETCH_ASSOC))
 {
-    $row = $result->fetch_array(MYSQLI_ASSOC);
     $followers[$j] = $row['friend'];
+	$j++;
 }
 
-$result = queryMysql("SELECT * FROM friends WHERE friend='$view'");
-$num = $result->num_rows;
+/* Get all the people that the user folows */
+$result = queryPDOMysql("SELECT * FROM friends WHERE friend='$view'");
 
-for ($j = 0 ; $j < $num ; ++$j)
+$j = 0;
+while( $row = $result->fetch(PDO::FETCH_ASSOC))
 {
-    $row = $result->fetch_array(MYSQLI_ASSOC);
     $following[$j] = $row['user'];
+	$j++;
 }
+
 
 $mutual = array_intersect($followers, $following);
 $followers = array_diff($followers, $mutual);
 $following = array_diff($following, $mutual);
-$friends = FALSE;
 
-if (sizeof($mutual))
-{
-    echo "<span class='subhead'>$name2 mutual friends</span><ul>";
-    foreach($mutual as $friend)
-        echo "<li><a href='members.php?view=$friend'>$friend</a>";
-    echo "</ul>";
-    $friends = TRUE;
-}
+if (!$mutual || !$followers || !$following) $friends = FALSE;
 
-if (sizeof($followers))
-{
-    echo "<span class='subhead'>$name2 followers</span><ul>";
-    foreach($followers as $friend)
-        echo "<li><a href='members.php?view=$friend'>$friend</a>";
-    echo "</ul>";
-    $friends = TRUE;
-}
+?>
 
-if (sizeof($following))
-{
-    echo "<span class='subhead'>$name3 following</span><ul>";
-    foreach($following as $friend)
-        echo "<li><a href='members.php?view=$friend'>$friend</a>";
-    echo "</ul>";
-    $friends = TRUE;
-}
+	<?php if ($mutual) :?>
+	<div class="row">
+	<h3>Mututal friends</h3>
+	</div>
+	<div class="row">
+		<ul class="list-group">
+			<?php foreach($mutual as $friend) : ?>
+				<li class="list-group-item"><a href='members.php?view=<?=$friend?>'><?=$friend?></a>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+	<?php endif; ?>
 
-if (!$friends) echo "<br>You don't have any friends yet.<br><br>";
+	<?php if ($followers) :?>
+	<div class="row">
+	<h3>Followers</h3>
+	</div>
+	<div class="row">
+		<ul class="list-group">
+			<?php foreach($followers as $friend) : ?>
+				<li class="list-group-item"><a href='members.php?view=<?=$friend?>'><?=$friend?></a>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+	<?php endif; ?>
 
+	<?php if ($following) :?>
+	<div class="row">
+	<h3><?=$name3?> following</h3>
+	</div>
+	<div class="row">
+		<ul class="list-group">
+			<?php foreach($following as $friend) : ?>
+				<li class="list-group-item"><a href='members.php?view=<?=$friend?>'><?=$friend?></a>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+	<?php endif; ?>
+
+	<?php if (!$friends) : ?>
+
+	<br>You don't have any friends yet.<br><br>
+
+	<?php endif; ?>
+
+
+<?php
 echo "<a class='button' href='messages.php?view=$view'>" .
     "View $name2 messages</a>";
 ?>
-</div><br>
-</body>
-</html>
+
+<?php require 'footer.php'; ?>
