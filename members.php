@@ -44,6 +44,7 @@ while( $row = $result->fetch(PDO::FETCH_ASSOC))
 
     $result1 = queryPDOMysql("SELECT * FROM friends WHERE user='". $row['user'] . "' AND friend='$user'");
     $t1 = $result1->rowCount();
+
     $result1 = queryPDOMysql("SELECT * FROM friends WHERE user='$user' AND friend='". $row['user'] . "'");
     $t2 = $result1->rowCount();
 
@@ -57,7 +58,5 @@ else echo " [<a href='members.php?remove=" . $row['user'] . "'>drop</a>]";
 
 }
 ?>
-
-
 </ul>
 <?php require 'footer.php' ?>
