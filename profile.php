@@ -5,25 +5,26 @@ if (!$loggedin) die();
 
 echo "<div class='main'><h3>Your Profile</h3>";
 
-$result = queryMysql("SELECT * FROM profiles WHERE user='$user'");
+$result = queryPDOMysql("SELECT * FROM profiles WHERE user='$user'");
 
 if (isset($_POST['text']))
 {
     $text = sanitizeString($_POST['text']);
     $text = preg_replace('/\s\s+/', '', $text);
 
-    if ($result->num_rows)
-        queryMysql("UPDATE profiles SET text='$text' WHERE user='$user'");
-    else queryMysql("INSERT INTO profiles VALUES('$user','$text')");
+    if ($result->rowCount())
+        queryPDOMysql("UPDATE profiles SET text='$text' WHERE user='$user'");
+    else queryPDOMysql("INSERT INTO profiles VALUES('$user','$text')");
 }
 else
 {
-    if ($result->num_rows)
+    if ($result->rowCount())
     {
-    $row = $result->fetch_array(MYSQLI_ASSOC);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
     $text = stripslashes($row['text']);
     }
-else $text = "";
+else {$text = "";
+	echo "whatever";}
 }
 
 $text = stripslashes(preg_replace('/\s\s+/','', $text));
@@ -77,16 +78,18 @@ if ($typeok)
 
 showProfile($user);
 
-echo <<<_END
-<form method='post' action='profile.php' enctype='multipart/form-data'>
-<h3>Enter or edit your details and/or upload an image</h3>
-<textarea name='text' cols='50' rows='3'>$text</textarea><br>
-_END;
 ?>
 
+<form method='post' action='profile.php' enctype='multipart/form-data'>
+ <div class="form-group">
+  <label for="description">Enter or edit your details and/or upload an image</label>
+  <textarea name="text" class="form-control" cols="10" rows="3" id="description"><?=$text?></textarea>
+</div>
+<div class="form-group">
+    <label for="profilePhotoUpload">Image:</label>
+    <input name="image" type="file" class="form-control-file" id="profilePhotoUpload" size="14">
+  </div>
+<input type='submit' class="btn btn-primary" value='Save Profile'>
+</form>
 
-Image: <input type='file' name='image' size='14'>
-<input type='submit' value='Save Profile'>
-</form></div><br>
-</body>
-</html>
+<?php require 'footer.php'; ?>

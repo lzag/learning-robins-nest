@@ -1,27 +1,52 @@
 <?php
 
-$dbhost="localhost";
-$dbname="robinsnest";
-$dbuser="robinsnest";
-$dbpass="rnpassword";
-$appname="Robins's Nest";
+require 'dbconfig.php';
 
-$connection = new mysqli($dbhost,$dbuser,$dbpass,$dbname);
+$appname="My Social Network";
 
-if($connection->connect_error) die($connection->connect_error);
+try
+{
+	$dsn = "mysql:host=".DB_HOST.";dbname=".DB_NAME.";";
+	$con = new PDO($dsn,DB_USER,DB_PASS);
+	$con->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+}
+catch (Exception $e)
+{
+	echo $e->getMessage();
+}
 
 function createTable($name,$query)
 {
-    queryMysql("CREATE TABLE IF NOT EXISTS $name($query)");
-    echo "Table '$name' created or already exists.<br>";
+	global $con;
+
+	try
+    {
+
+		$sql = $con->query("CREATE TABLE IF NOT EXISTS $name ( $query ) ");
+		if($sql) echo "Table '$name' created or already exists.<br>";
+
+	}
+	catch (PDOException $e)
+	{
+		echo $e->getMessage(). "<br>";
+	}
+
 }
 
-function queryMysql($query)
+function queryPDOMysql($query)
 {
-    global $connection;
-    $result = $connection->query($query);
-    if (!$result) die($connection->error);
-    return $result;
+    global $con;
+	try
+	{
+		$result = $con->query($query);
+		return $result;
+	}
+   	catch (PDOException $e)
+	{
+		$e->getMessage();
+		return false;
+	}
+
 }
 
 function destroySession()
@@ -29,27 +54,27 @@ function destroySession()
     $_SESSION=array();
     if (session_id() != "" || isset($_COOKIE[session_name()]))
         setcookie(session_name(),'',time()-25920000,'/');
-
-session_destroy();
+	session_destroy();
 }
 
 function sanitizeString($var)
 {
-    global $connection;
     $var = strip_tags($var);
     $var = htmlentities($var);
     $var = stripslashes($var);
-    return $connection->real_escape_string($var);
+    return $var;
 }
 
 function showProfile($user)
 {
     if(file_exists("$user.jpg"))
         echo "<img src='$user.jpg' style='float:left;'>";
-    $result = queryMysql("SELECT * FROM profiles WHERE user='$user'");
-    if($result->num_rows)
+    $result = queryPDOMysql("SELECT * FROM profiles WHERE user='$user'");
+
+
+    if($result->rowCount())
     {
-        $row = $result->fetch_array(MYSQLI_ASSOC);
+        $row = $result->fetch(PDO::FETCH_ASSOC);
         echo stripslashes($row['text']) . "<br style='clear:left;'><br>";
     }
 }
