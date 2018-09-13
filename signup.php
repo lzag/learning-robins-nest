@@ -14,12 +14,15 @@ if (isset($_POST['user']))
         $error = "Not all fields were entered";
     else
     {
-        $result = queryPDOMysql("SELECT * FROM members WHERE username='$username'");
+        $result = $con->prepare("SELECT * FROM members WHERE username=?");
+		$result->execute(array($username));
         if ($result->rowCount())
             $error = "That username already exists";
         else
         {
-			if (queryPDOMysql("INSERT INTO members (user_id, username, pass) VALUES(NULL,'$username','$pass')")) $signup_success = TRUE;
+			$result = $con->prepare("INSERT INTO members (user_id, username, pass) VALUES(NULL,?,?)");
+			$result->execute(array($username,$pass));
+			if ($result) $signup_success = TRUE;
         }
     }
 }
