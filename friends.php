@@ -53,10 +53,10 @@ $friends = (!$mutual && !$followers && !$following) ? FALSE : TRUE;
 ?>
 
 	<?php if ($mutual) :?>
-	<div class="row">
-	<h3>Mututal friends</h3>
+	<div class="col-md-10">
+	<h3>Mututal friends: </h3>
 	</div>
-	<div class="row">
+	<div class="col-md-2">
 		<ul class="list-group">
 			<?php foreach($mutual as $friend) : ?>
 				<li class="list-group-item"><a href='members.php?view=<?=$friend?>'><?=$friend?></a>
@@ -66,10 +66,10 @@ $friends = (!$mutual && !$followers && !$following) ? FALSE : TRUE;
 	<?php endif; ?>
 
 	<?php if ($followers) :?>
-	<div class="row">
-	<h3>Followers</h3>
+	<div class="col-md-10">
+	<h3>Followers: </h3>
 	</div>
-	<div class="row">
+	<div class="col-md-2">
 		<ul class="list-group">
 			<?php foreach($followers as $friend) : ?>
 				<li class="list-group-item"><a href='members.php?view=<?=$friend?>'><?=$friend?></a>
@@ -79,16 +79,17 @@ $friends = (!$mutual && !$followers && !$following) ? FALSE : TRUE;
 	<?php endif; ?>
 
 	<?php if ($following) :?>
-	<div class="row">
-	<h3><?=$name3?> following</h3>
+	<div class="col-md-10">
+	<h3><?=$name3?> following: </h3>
 	</div>
-	<div class="row">
+	<div class="col-md-2">
 		<ul class="list-group">
 			<?php foreach($following as $friend) : ?>
 				<li class="list-group-item"><a href='members.php?view=<?=$friend?>'><?=$friend?></a>
 			<?php endforeach; ?>
 		</ul>
 	</div>
+
 	<?php endif; ?>
 
 	<?php if (!$friends) : ?>
@@ -99,8 +100,8 @@ $friends = (!$mutual && !$followers && !$following) ? FALSE : TRUE;
 
 
 <?php
-echo "<a class='button' href='messages.php?view=$view'>" .
-    "View $name2 messages</a>";
+echo "<div class='col-md-2'><a class='btn btn-primary mt-5' href='messages.php?view=$view'>" .
+    "View $name2 messages</a></div>";
 ?>
 
 <?php require 'footer.php'; ?>

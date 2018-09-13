@@ -32,7 +32,7 @@ else if (isset($_GET['remove']))
 $result = queryPDOMysql("SELECT username FROM members ORDER by username");
 ?>
 
-<h3>Other Members (total of <?=User::totalMembers()?>) </h3><ul>
+<h3>Other Members (<?=User::totalMembers()?> in total) </h3><ul>
 
 <?php
 while( $row = $result->fetch(PDO::FETCH_ASSOC))

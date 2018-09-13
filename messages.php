@@ -90,20 +90,27 @@ if ($view != "")
 
 <br><a class="btn btn-primary" href="messages.php?view=<?=$view?>">Refresh messages</a>
 
-
+<?php if ($view != $user->getUsername()) : ?>
+<div class="row">
+   <div class="col-md-6 mt-5">
     <form method="post" action="messages.php?view=<?=$view?>">
     <div class="form-group">
-    <label for="message">Type here to leave a message</label>
-    <textarea name="text" cols="40" rows="3" id="message"></textarea>
+    <label for="message">Type here to leave <?=$view?> a message</label>
+    <textarea type="text" name="text" cols="40" rows="3" id="message" class="form-control"></textarea>
 	</div>
-   	<div class="form-check">
-   		<label for="pm-0">Public</label>
-   		<input id="pm-0" type="radio" name="pm" value="0" checked="checked">
+   	<div class="form-check form-check-inline">
+   		<input class="form-check-input" id="pm-0" type="radio" name="pm" value="0" checked="checked">
+   		<label class="form-check-label" for="pm-0">Public </label>
    	</div>
-   	<div class="form-check">
-   		<label for="pm-1">Private</label>
-   		<input id="pm-1" type="radio" name="pm" value="0" checked="checked">
+   	<div class="form-check form-check-inline">
+   		<input class="form-check-input" id="pm-1" type="radio" name="pm" value="0" checked="checked">
+   		<label class="form-check-label" for="pm-1">Private </label>
    	</div>
-    <input class="btn btn-primary" type="submit" value="Post Message"></form><br>
+   	<br>
+    <input class="btn btn-primary mt-3" type="submit" value="Post Message">
+    </form><br>
+    </div>
+ </div>
+<?php endif; ?>
 
 <?php require 'footer.php'; ?>
