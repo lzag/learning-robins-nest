@@ -1,17 +1,10 @@
 <?php
 require_once 'functions.php';
+spl_autoload_register( function ($class) {
+	include $class . '.php';
+});
 session_start();
-$userstr = ' (Guest)';
-if (isset($_SESSION['user']))
-{
-    $user = $_SESSION['user'];
-    $loggedin = TRUE;
-    $userstr = " ($user)";
-}
-else
-{
-	$loggedin = FALSE;
-}
+$user = new User;
 
 ?>
 
@@ -21,7 +14,7 @@ else
 	<head>
 		<meta charset="UTF-8">
 		<title>
-			<?=$appname.$userstr?>
+			<?=$appname.$user->getUserstr()?>
 		</title>
 		<link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css" type="text/css">
 		<link rel="stylesheet" href="style.css" type="text/css">
@@ -38,10 +31,10 @@ else
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
 
-						<?php if ($loggedin) : // Echo the menu for logged users ?>
+						<?php if ($user->loggedin) : // Echo the menu for logged users ?>
 
 						<li class="nav-item active">
-							<a class="nav-link" href="members.php?view=<?=$user?>">Home <span class="sr-only">(current)</span></a>
+							<a class="nav-link" href="members.php?view=<?=$user->getUsername()?>">Home <span class="sr-only">(current)</span></a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="members.php">Members</a>

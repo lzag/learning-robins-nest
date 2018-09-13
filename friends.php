@@ -2,12 +2,12 @@
 
 require_once 'header.php';
 
-if (!$loggedin) die("You need to be loggedin in order to view this page");
+if (!$user->loggedin) die("You need to be loggedin in order to view this page");
 
 if (isset($_GET['view'])) $view = sanitizeStrings($_GET['view']);
-else $view = $user;
+else $view = $user->getUsername();
 
-if ($view == $user)
+if ($view == $user->getUsername())
 {
     $name1 = $name2 = "Your";
     $name3 = "You are";
@@ -24,7 +24,7 @@ $following = array();
 
 
 /* Get all the people who are following the user*/
-$result = queryPDOMysql("SELECT * FROM friends WHERE user='$view'");
+$result = queryPDOMysql("SELECT * FROM friends WHERE username='$view'");
 
 $j = 0;
 while($row = $result->fetch(PDO::FETCH_ASSOC))
@@ -39,7 +39,7 @@ $result = queryPDOMysql("SELECT * FROM friends WHERE friend='$view'");
 $j = 0;
 while( $row = $result->fetch(PDO::FETCH_ASSOC))
 {
-    $following[$j] = $row['user'];
+    $following[$j] = $row['username'];
 	$j++;
 }
 

@@ -2,7 +2,7 @@
 require_once 'header.php';
 
 /* Check for login */
-if (!$loggedin) die("Sorry, you need to be logged in to view this page");
+if (!$user->loggedin) die("Sorry, you need to be logged in to view this page");
 
 if (isset($_GET['view']))
 {
@@ -10,7 +10,7 @@ if (isset($_GET['view']))
 }
 else
 {
-	$view = $user;
+	$view = $user->getUsername();
 }
 
 /* Inserting the text message into the database*/
@@ -22,7 +22,7 @@ if (isset($_POST['text']))
     {
         $pm = substr(sanitizeString($_POST['pm']),0,1);
         $time = time();
-        queryPDOMysql("INSERT INTO messages VALUES(NULL, '$user', '$view', '$pm','$time','$text')");
+        queryPDOMysql("INSERT INTO messages VALUES(NULL, '{$user->getUsername()}', '$view', '$pm','$time','$text')");
     }
 	else
 	{
@@ -46,15 +46,12 @@ if ($view != "")
         $name1 = "<a href='members.php'?view=$view'>$view</a>'s";
         $name2 = "$view's";
     }
+}
  ?>
-
 
 <div class='main'><h3><?=$name1?> Messages</h3>
 
-
-
 <?php
-
 
    $query = "SELECT * FROM messages WHERE recip='$view' ORDER BY time DESC";
    $result = queryPDOMysql($query);
@@ -87,10 +84,9 @@ if ($view != "")
 
         }
     }
-}
-
 
 ?>
+<?php endif; ?>
 
 <br><a class="btn btn-primary" href="messages.php?view=<?=$view?>">Refresh messages</a>
 
@@ -109,6 +105,5 @@ if ($view != "")
    		<input id="pm-1" type="radio" name="pm" value="0" checked="checked">
    	</div>
     <input class="btn btn-primary" type="submit" value="Post Message"></form><br>
-
 
 <?php require 'footer.php'; ?>

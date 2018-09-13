@@ -1,11 +1,11 @@
 <?php
 require_once 'header.php';
 
-if (!$loggedin) die();
+if (!$user->loggedin) die("You need to be logged in in order to view this page");
 
 echo "<div class='main'><h3>Your Profile</h3>";
 
-$result = queryPDOMysql("SELECT * FROM members WHERE user='$user'");
+$result = queryPDOMysql("SELECT * FROM members WHERE username='{$user->getUsername()}'");
 
 if (isset($_POST['text']))
 {
@@ -13,8 +13,8 @@ if (isset($_POST['text']))
     $text = preg_replace('/\s\s+/', '', $text);
 
     if ($result->rowCount())
-        queryPDOMysql("UPDATE members SET description='$text' WHERE user='$user'");
-    else queryPDOMysql("INSERT INTO members (user, description) VALUES('$user','$text')");
+        queryPDOMysql("UPDATE members SET description='$text' WHERE username='{$user->getUsername()}'");
+    else queryPDOMysql("INSERT INTO members (username, description) VALUES('{$user->getUsername()}','$text')");
 }
 else
 {
@@ -31,7 +31,7 @@ $text = stripslashes(preg_replace('/\s\s+/','', $text));
 
 if (isset($_FILES['image']['name']))
 {
-    $saveto = "./uploads/$user.jpg";
+    $saveto = "./uploads/{$user->getUsername()}.jpg";
     move_uploaded_file($_FILES['image']['tmp_name'], $saveto);
     $typeok = TRUE;
 
@@ -76,7 +76,7 @@ if ($typeok)
 }
 
 
-showProfile($user);
+showProfile($user->getUsername());
 
 ?>
 

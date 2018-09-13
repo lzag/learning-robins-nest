@@ -68,7 +68,7 @@ function showProfile($user)
 {
     if(file_exists("./uploads/$user.jpg"))
         echo "<img src='./uploads/$user.jpg' style='float:left;'>";
-    $result = queryPDOMysql("SELECT description FROM members WHERE user='$user'");
+    $result = queryPDOMysql("SELECT description FROM members WHERE username='$user'");
 
     if($result->rowCount())
     {
