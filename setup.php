@@ -11,9 +11,11 @@
         require_once 'functions.php';
 
         createTable('members',
-                   'user VARCHAR(16),
+					'user_id INT NOT NULL AUTO_INCREMENT,
+                   user VARCHAR(16),
                    pass VARCHAR(16),
-                   INDEX(user(6))');
+				   description TEXT NULL,
+                   PRIMARY KEY (user_id)');
 
         createTable('messages',
                    'id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -31,10 +33,6 @@
                    INDEX(user(6)),
                    INDEX(friend(6))');
 
-        createTable('profiles',
-                   'user VARCHAR(16),
-                   text VARCHAR(4096),
-                   INDEX(user(6))');
         ?>
         <br>... done.
     </body>

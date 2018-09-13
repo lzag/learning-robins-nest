@@ -19,7 +19,7 @@ if (isset($_POST['user']))
             $error = "That username already exists";
         else
         {
-			if (queryPDOMysql("INSERT INTO members VALUES(NULL,'$user','$pass')")) $signup_success = TRUE;
+			if (queryPDOMysql("INSERT INTO members (user_id, user, pass) VALUES(NULL,'$user','$pass')")) $signup_success = TRUE;
         }
     }
 }
