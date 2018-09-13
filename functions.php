@@ -30,7 +30,6 @@ function createTable($name,$query)
 	{
 		echo $e->getMessage(). "<br>";
 	}
-
 }
 
 function queryPDOMysql($query)
@@ -43,7 +42,7 @@ function queryPDOMysql($query)
 	}
    	catch (PDOException $e)
 	{
-		$e->getMessage();
+		echo $e->getMessage();
 		return false;
 	}
 
@@ -67,14 +66,13 @@ function sanitizeString($var)
 
 function showProfile($user)
 {
-    if(file_exists("$user.jpg"))
-        echo "<img src='$user.jpg' style='float:left;'>";
-    $result = queryPDOMysql("SELECT * FROM profiles WHERE user='$user'");
-
+    if(file_exists("./uploads/$user.jpg"))
+        echo "<img src='./uploads/$user.jpg' style='float:left;'>";
+    $result = queryPDOMysql("SELECT description FROM members WHERE username='$user'");
 
     if($result->rowCount())
     {
         $row = $result->fetch(PDO::FETCH_ASSOC);
-        echo stripslashes($row['text']) . "<br style='clear:left;'><br>";
+        echo stripslashes($row['description']) . "<br style='clear:left;'><br>";
     }
 }

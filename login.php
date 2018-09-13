@@ -2,27 +2,27 @@
 
 require 'header.php';
 
-$error = $user = $pass = "";
+$error = $username = $pass = "";
 
 if (isset($_POST['user']))
 {
-    $user = sanitizeString($_POST['user']);
+    $username = sanitizeString($_POST['user']);
     $pass = sanitizeString($_POST['pass']);
 
-    if ($user == "" || $pass == "")
+    if ($username == "" || $pass == "")
 	{
 		$error = "Not all fields were entered";
 	}
 	else
 	{
-		$result = queryPDOMysql("SELECT user,pass FROM members WHERE user='$user' AND pass='$pass'");
+		$result = queryPDOMysql("SELECT username,pass FROM members WHERE username='$username' AND pass='$pass'");
 		if ( !$result->fetchAll() )
     	{
         	$error = "Username/Password invalid";
     	}
 		else
     	{
-			$_SESSION['user'] = $user;
+			$_SESSION['user'] = $username;
 			$_SESSION['pass'] = $pass;
 			$login_success = TRUE;
     	}
@@ -33,7 +33,7 @@ if (isset($login_success)) :
 
 ?>
 
-<span class="text-success mt-3">You are now logged in. Please <a href="members.php?view=<?=$user?>">click here</a> to continue.</span>
+<span class="text-success mt-3">You are now logged in. Please <a href="members.php?view=<?=$user->getUsername()?>">click here</a> to continue.</span>
 
 <?php else : ?>
 
@@ -42,7 +42,7 @@ if (isset($login_success)) :
  <span class="text-danger"><?=$error?></span>
   <div class="form-group">
     <label for="inputUsername">Username</label>
-    <input name="user" value="<?=$user?>" type="text" class="form-control" id="inputUsername" aria-describedby="emailHelp" placeholder="Enter username" maxlength="16">
+    <input name="user" value="<?=$username?>" type="text" class="form-control" id="inputUsername" aria-describedby="emailHelp" placeholder="Enter username" maxlength="16">
   </div>
   <div class="form-group">
     <label for="inputPassword">Password</label>

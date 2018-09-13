@@ -2,26 +2,24 @@
 
 require_once 'header.php';
 
-$error = $user= $pass = "";
+$error = $username = $pass = "";
 if (isset($_SESSION['user'])) destroySession();
 
 if (isset($_POST['user']))
 {
-    $user = sanitizeString($_POST['user']);
+    $username = sanitizeString($_POST['user']);
     $pass = sanitizeString($_POST['pass']);
 
-    if ($user == "" || $pass == "")
+    if ($username == "" || $pass == "")
         $error = "Not all fields were entered";
     else
     {
-        $result=queryPDOMysql("SELECT * FROM members WHERE user='$user'");
+        $result = queryPDOMysql("SELECT * FROM members WHERE username='$username'");
         if ($result->rowCount())
             $error = "That username already exists";
         else
         {
-            queryPDOMysql("INSERT INTO members VALUES('$user','$pass')");
-			$signup_success = TRUE;
-
+			if (queryPDOMysql("INSERT INTO members (user_id, username, pass) VALUES(NULL,'$username','$pass')")) $signup_success = TRUE;
         }
     }
 }
@@ -39,7 +37,7 @@ if (isset($_POST['user']))
  <span class="text-danger"><?=$error?></span>
   <div class="form-group">
     <label for="inputUsername">Username</label>
-    <input name="user" value="<?=$user?>" type="text" class="form-control" id="signupUsername" aria-describedby="emailHelp" placeholder="Enter username" maxlength="16" onBlur="checkUser(this)">
+    <input name="user" value="<?=$username?>" type="text" class="form-control" id="signupUsername" aria-describedby="emailHelp" placeholder="Enter username" maxlength="16" onBlur="checkUser(this)">
   </div>
   <div class="form-group">
     <label for="inputPassword">Password</label>
