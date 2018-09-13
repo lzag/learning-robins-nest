@@ -13,8 +13,15 @@ if (isset($_POST['text']))
     $text = preg_replace('/\s\s+/', '', $text);
 
     if ($result->rowCount())
-        queryPDOMysql("UPDATE members SET description='$text' WHERE username='{$user->getUsername()}'");
-    else queryPDOMysql("INSERT INTO members (username, description) VALUES('{$user->getUsername()}','$text')");
+	{
+        $stmt = $con->prepare("UPDATE members SET description= ? WHERE username= ?");
+		$stmt->execute(array($text,$user->getUsername()));
+	}
+    else
+	{
+	$stmt = $con->prepare("INSERT INTO members (username, description) VALUES(?,?)");
+	$stmt->execute(array($user->getUsername(), $text));
+	}
 }
 else
 {

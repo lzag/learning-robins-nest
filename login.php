@@ -15,7 +15,8 @@ if (isset($_POST['user']))
 	}
 	else
 	{
-		$result = queryPDOMysql("SELECT username,pass FROM members WHERE username='$username' AND pass='$pass'");
+		$result = $con->prepare("SELECT username,pass FROM members WHERE username= ? AND pass= ?");
+		$result->execute(array($username,$pass));
 		if ( !$result->fetchAll() )
     	{
         	$error = "Username/Password invalid";

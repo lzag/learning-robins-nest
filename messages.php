@@ -16,13 +16,13 @@ else
 /* Inserting the text message into the database*/
 if (isset($_POST['text']))
 {
-    $text = sanitizeString($_POST['text']);
-
+	$stmt = $con->prepare("INSERT INTO messages VALUES(?, ?, ?, ?, ?, ?)" );
+    $text = $_POST['text'];
     if ($text != "")
     {
         $pm = substr(sanitizeString($_POST['pm']),0,1);
         $time = time();
-        queryPDOMysql("INSERT INTO messages VALUES(NULL, '{$user->getUsername()}', '$view', '$pm','$time','$text')");
+        $stmt->execute(array('NULL',$user->getUsername(), $view, $pm, $time, $text));
     }
 	else
 	{
@@ -34,13 +34,14 @@ if (isset($_POST['text']))
 if (isset($_GET['erase']))
     {
         $erase = sanitizeString($_GET['erase']);
-        queryPDOMysql("DELETE FROM messages WHERE id=$erase AND recip='$user'");
+		$stmt = $con->prepare("DELETE FROM messages WHERE id= ? AND recip= ?");
+        $stmt->execute(array($erase,$user->getUsername()));
     }
 
 /* Set variables depending on whose profile the user is viewing */
 if ($view != "")
 {
-    if ($view == $user) $name1 = $name2 = "Your";
+    if ($view == $user->getUsername()) $name1 = $name2 = "Your";
     else
     {
         $name1 = "<a href='members.php'?view=$view'>$view</a>'s";
@@ -53,8 +54,8 @@ if ($view != "")
 
 <?php
 
-   $query = "SELECT * FROM messages WHERE recip='$view' ORDER BY time DESC";
-   $result = queryPDOMysql($query);
+   $result = $con->prepare("SELECT * FROM messages WHERE recip= ? ORDER BY time DESC");
+   $result->execute(array($view));
 ?>
 
 <?php if ($result->rowCount() == 0) : ?>
@@ -67,7 +68,7 @@ if ($view != "")
     while( $row = $result->fetch(PDO::FETCH_ASSOC))
     {
 
-        if ($row['pm'] == 0 || $row['auth'] == $user || $row['recip'] == $user)
+        if ($row['pm'] == 0 || $row['auth'] == $user->getUsername() || $row['recip'] == $user->getUsername())
         {
             echo "On " . date('M jS \'y g:ia: ', $row['time']) . "<br>";
             echo "<strong><a href='messages.php?view=".$row['auth']."'>".$row['auth']."</a></strong> ";
@@ -77,7 +78,7 @@ if ($view != "")
             else
                 echo "whispered: <span class='whisper'>&quot;" . $row['message'] . "&quot;</span>";
 
-            if ($row['recip'] == $user)
+            if ($row['recip'] == $user->getUsername())
                 echo "[<a href='messages.php?view=$view" . "&erase=" . $row['id'] . "'>erase</a>]";
 
             echo "<br>";

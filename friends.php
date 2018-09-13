@@ -24,7 +24,8 @@ $following = array();
 
 
 /* Get all the people who are following the user*/
-$result = queryPDOMysql("SELECT * FROM friends WHERE username='$view'");
+$result = $con->prepare("SELECT * FROM friends WHERE username= ?");
+$result->execute(array($view));
 
 $j = 0;
 while($row = $result->fetch(PDO::FETCH_ASSOC))
@@ -34,7 +35,8 @@ while($row = $result->fetch(PDO::FETCH_ASSOC))
 }
 
 /* Get all the people that the user folows */
-$result = queryPDOMysql("SELECT * FROM friends WHERE friend='$view'");
+$result = $con->prepare("SELECT * FROM friends WHERE friend= ?");
+$result->execute(array($view));
 
 $j = 0;
 while( $row = $result->fetch(PDO::FETCH_ASSOC))
