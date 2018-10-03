@@ -1,7 +1,7 @@
 <?php
 require_once 'functions.php';
 spl_autoload_register( function ($class) {
-	include $class . '.php';
+	include strtolower($class) . '.php';
 });
 session_start();
 $user = new User;
