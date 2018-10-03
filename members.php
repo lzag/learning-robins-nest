@@ -56,6 +56,7 @@ while( $row = $result->fetch(PDO::FETCH_ASSOC))
 if (!$t1) echo " [<a href='members.php?add=" . $row['username'] . "'>$follow</a>]";
 else echo " [<a href='members.php?remove=" . $row['username'] . "'>drop</a>]";
 
+echo " => <a href=\"messages.php?view={$row['username']}\"> send {$row['username']} a message</a>";
 }
 ?>
 </ul>
