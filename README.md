@@ -1,4 +1,4 @@
-# learning-robins-nest
+# Social network example
 Learning project - social network built with PHP
 
 V1.0 is based on the book "Learning PHP, HTML and CSS"
